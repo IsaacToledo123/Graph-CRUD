@@ -4,6 +4,21 @@ import videoController from "../controller/video";
 import commentController from "../controller/comment";
 
 const typeDefs = `
+
+type WebHookResponse {
+
+    id : ID
+    url : String
+    event : String
+    user : String
+  }
+  type WebHook {
+
+    id : ID!
+    url : String
+    event : String
+    userId : String
+  }
     type User {
         id: ID!
         name: String!
@@ -23,6 +38,9 @@ const typeDefs = `
         authorId: User
     }    
     type Query {
+        webhookUrlById(token: String!, webHookId : String!): WebHookResponse
+        webhookUrls(token : String!, first : Int, after : Int): [WebHook]
+        webhookUrlsByIdUser(token : String!, userId: String, first : Int, after: Int): [WebHook]
         authUser: User
         users: [User]
         user(id: ID!): User
@@ -65,10 +83,10 @@ const resolvers = {
         // authUser(){
         //     // return userController.authUser();
         // },
-        user(_: any, {id}: any){
+        user(_: any, { id }: any) {
             return userController.readById(id);
         },
-        users(){
+        users() {
             return userController.readAll();
         },
         // users: userController.readAll,
@@ -79,64 +97,64 @@ const resolvers = {
         // comments: commentController.readByVideo,
         webhookUrlById: async (__: void, args: any) => {
             try {
-              const { webHookId } = args;
-      
-              const webhook = await WebHook.findById(webHookId);
-              if (!webhook) return null;
-      
-              const { id, url, event, userId } = webhook;
-      
-              // Aquí podrías agregar la lógica para obtener el nombre de usuario del userId si lo necesitas
-      
-              return { id, url, event, userId };
-            } catch (error) {
-              console.error("Ha ocurrido un error:", error);
-              return null;
-            }
-          },
-      
-          webhookUrls: async (__: void, args: any) => {
-            try {
-              const { first, after } = args;
-      
-              const endpoints = await WebHook.find().skip(after ? after : 0).limit(first);
-              return endpoints;
-            } catch (error) {
-              console.error("Ha ocurrido un error:", error);
-              return null;
-            }
-          },
-      
-          webhookUrlsByIdUser: async (__: void, args: any) => {
-            try {
-              const { userId, first, after } = args;
-      
-              const webhooks = await WebHook.find({ userId }).skip(after ? after : 0).limit(first);
-              return webhooks;
-            } catch (error) {
-              console.error("Ha ocurrido un error:", error);
-              return null;
-            }
-          }
-        }
+                const { webHookId } = args;
 
-    },
+                const webhook = await WebHook.findById(webHookId);
+                if (!webhook) return null;
+
+                const { id, url, event, userId } = webhook;
+
+                // Aquí podrías agregar la lógica para obtener el nombre de usuario del userId si lo necesitas
+
+                return { id, url, event, userId };
+            } catch (error) {
+                console.error("Ha ocurrido un error:", error);
+                return null;
+            }
+        },
+
+        webhookUrls: async (__: void, args: any) => {
+            try {
+                const { first, after } = args;
+
+                const endpoints = await WebHook.find().skip(after ? after : 0).limit(first);
+                return endpoints;
+            } catch (error) {
+                console.error("Ha ocurrido un error:", error);
+                return null;
+            }
+        },
+
+        webhookUrlsByIdUser: async (__: void, args: any) => {
+            try {
+                const { userId, first, after } = args;
+
+                const webhooks = await WebHook.find({ userId }).skip(after ? after : 0).limit(first);
+                return webhooks;
+            } catch (error) {
+                console.error("Ha ocurrido un error:", error);
+                return null;
+            }
+        }
+    }
+
+},
     Mutation: {
         createUser(_: any, { input }: any) {
             return userController.create(input);
         },
-        updateUser(_: any, { input }: any) {
-            return userController.updateById(input);
-        },
-        deleteUser(_: any, { input }: any) {
-            try{
-                return userController.deleteById(input);
-            }
-            catch(err: any){
-                console.log(err.message);
-                return { message: err.message };
-            }
-        },
+updateUser(_: any, { input }: any) {
+    return userController.updateById(input);
+},
+deleteUser(_: any, { input }: any) {
+    try {
+        return userController.deleteById(input);
+    }
+    catch (err: any) {
+        console.log(err.message);
+        return { message: err.message };
+    }
+},
     }
 };
 
