@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const url: any = "mongodb://127.0.0.1:27017/Social_Medial";
+const url: any = "mongodb://127.0.0.1:27017/youtube-clone";
 
 async function connectToMongoDB() {
     try {

@@ -1,10 +1,8 @@
 import "dotenv/config"
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone"
-import { title } from "process";
-import { resolvers } from "./graphql/resolvers";
-import { typeDefs } from "./graphql/typeDefs";
-import connectToMongoDB from "./connection";
+import { typeDefs, resolvers } from "./graphql/schema";
+import connectToMongoDB from "./config/database/connection";
 
 
 connectToMongoDB();
